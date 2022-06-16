@@ -1,6 +1,6 @@
 import 'package:aendant/app.dart';
-import 'package:aendant/features/alert/alert.dart';
-import 'package:aendant/features/timer/timer.dart';
+import 'package:aendant/features/nextofkin/nextofkin.dart';
+import 'package:aendant/features/owner/owner.dart';
 import 'package:flutter/material.dart';
 import 'package:shake/shake.dart';
 
