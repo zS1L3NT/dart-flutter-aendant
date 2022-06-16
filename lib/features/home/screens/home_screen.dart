@@ -87,11 +87,12 @@ class _HomeScreenState extends State<HomeScreen> with RouteAware {
                           value: threshold,
                           min: 1,
                           max: 5,
+                          divisions: 400,
                           onChanged: (value) {
                             _setState(() => threshold = value);
                           },
                         ),
-                        Text(threshold.toString()),
+                        Text(threshold.toStringAsFixed(2)),
                       ],
                     ),
                   );
