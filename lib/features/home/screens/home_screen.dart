@@ -12,18 +12,22 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> with RouteAware {
+  ShakeDetector? detector;
   bool _isCurrentScreen = true;
-  late final ShakeDetector detector;
+  double _threshold = 1.5;
 
   @override
   void initState() {
     super.initState();
 
-    double threshold = 1.5;
-    debugPrint("Shake Threshold: $threshold");
+    setupDetector();
+  }
 
+  void setupDetector() {
+    debugPrint("Setting up detector with a threshold of $_threshold");
+    detector?.stopListening();
     detector = ShakeDetector.autoStart(
-      shakeThresholdGravity: threshold,
+      shakeThresholdGravity: _threshold,
       onPhoneShake: () {
         if (_isCurrentScreen) {
           Navigator.of(context).push(
@@ -32,7 +36,7 @@ class _HomeScreenState extends State<HomeScreen> with RouteAware {
         }
       },
     );
-    detector.startListening();
+    detector!.startListening();
   }
 
   @override
@@ -63,6 +67,56 @@ class _HomeScreenState extends State<HomeScreen> with RouteAware {
       onTap: () {
         Navigator.of(context).push(
           MaterialPageRoute(builder: (_) => const AlertScreen()),
+        );
+      },
+      onLongPress: () {
+        double threshold = _threshold;
+
+        showDialog(
+          context: context,
+          builder: (_) {
+            return AlertDialog(
+              title: const Text("Change Threshold"),
+              content: StatefulBuilder(
+                builder: (context, _setState) {
+                  return SizedBox(
+                    height: 90,
+                    child: Column(
+                      children: [
+                        Slider.adaptive(
+                          value: threshold,
+                          min: 1,
+                          max: 5,
+                          onChanged: (value) {
+                            _setState(() => threshold = value);
+                          },
+                        ),
+                        Text(threshold.toString()),
+                      ],
+                    ),
+                  );
+                },
+              ),
+              actions: [
+                TextButton(
+                  child: const Text("Cancel"),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+                TextButton(
+                  child: const Text("Save"),
+                  onPressed: () {
+                    setState(() {
+                      _threshold = threshold;
+                      setupDetector();
+                    });
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          },
         );
       },
       child: Scaffold(
