@@ -1,3 +1,4 @@
+import 'package:aendant/features/owner/owner.dart';
 import 'package:flutter/material.dart';
 
 class TimerScreen extends StatefulWidget {
@@ -25,7 +26,11 @@ class _TimerScreenState extends State<TimerScreen> {
         time--;
       });
       Future.delayed(const Duration(seconds: 1), decrement);
-    } else {}
+    } else {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (_) => const ContactingScreen()),
+      );
+    }
   }
 
   @override
