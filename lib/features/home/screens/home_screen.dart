@@ -1,8 +1,61 @@
+import 'package:aendant/app.dart';
 import 'package:aendant/features/alert/alert.dart';
+import 'package:aendant/features/timer/timer.dart';
 import 'package:flutter/material.dart';
+import 'package:shake/shake.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> with RouteAware {
+  bool _isCurrentScreen = true;
+  late final ShakeDetector detector;
+
+  @override
+  void initState() {
+    super.initState();
+
+    double threshold = 1.5;
+    debugPrint("Shake Threshold: $threshold");
+
+    detector = ShakeDetector.autoStart(
+      shakeThresholdGravity: threshold,
+      onPhoneShake: () {
+        if (_isCurrentScreen) {
+          Navigator.of(context).push(
+            MaterialPageRoute(builder: (_) => const TimerScreen()),
+          );
+        }
+      },
+    );
+    detector.startListening();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    routeObserver.subscribe(this, ModalRoute.of(context)!);
+  }
+
+  @override
+  void didPopNext() {
+    _isCurrentScreen = true;
+  }
+
+  @override
+  void didPushNext() {
+    _isCurrentScreen = false;
+  }
+
+  @override
+  void dispose() {
+    routeObserver.unsubscribe(this);
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
